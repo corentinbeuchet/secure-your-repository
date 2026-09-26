@@ -1,4 +1,4 @@
-# 🛡️ TP DevOps – Mettre en place un workflow GitHub sécurisé (CI + Review)
+# 🛡️ Exercice 2 – Mettre en place un workflow GitHub sécurisé (CI + revue de code)
 
 ## 📌 Contexte général
 Vous travaillez sur un projet hébergé sur GitHub.
@@ -12,15 +12,14 @@ Afin de garantir la qualité du code et de limiter les erreurs, l'équipe décid
 
 ---
 
-## 🎯 Objectifs pédagogiques
-À la fin de ce TP, vous serez capable de :
-- Comprendre le rôle d'un pipeline CI/CD
-- Créer une branche de fonctionnalité
-- Mettre en place une CI avec GitHub Actions
-- Bloquer les push directs sur `main`
-- Empêcher le merge si la CI échoue
-- Exiger une revue de code avant le merge
-- Comprendre les responsabilités liées aux revues de code
+## 🎯 Ce que vous devez comprendre et savoir faire
+À la fin de cet exercice, vous devez être capable de :
+- **Expliquer à quoi sert une CI** : chaque proposition de changement est vérifiée automatiquement, de la même façon pour tout le monde, avant d'arriver sur `main`.
+- **Écrire un workflow GitHub Actions** simple : quand il se déclenche (`on:`), ce qu'il exécute (`jobs:` / `steps:`), et où lire son résultat.
+- **Protéger `main`** pour que personne, pas même vous, ne puisse y pousser directement.
+- **Rendre la CI bloquante** : une PR dont la CI est rouge ne peut pas être mergée.
+- **Exiger une revue de code**, et expliquer pourquoi une approbation doit être refaite après un nouveau commit.
+- **Dire ce que vous engagez en approuvant une PR** : relire, comprendre, questionner, pas juste cliquer sur « Approve ».
 
 ---
 
@@ -73,7 +72,7 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     steps:
       - uses: actions/checkout@v7
       - name: Run tests
@@ -81,6 +80,8 @@ jobs:
           echo "Running tests..."
           echo "Tests OK"
 ```
+
+> `runs-on: ubuntu-26.04` : la machine qui exécute le job, ici la dernière version LTS d'Ubuntu. On fixe la version plutôt que d'écrire `ubuntu-latest`, qui change de version sans prévenir (et casse parfois un pipeline qui marchait la veille).
 
 Puis committez et poussez les deux fichiers :
 ```bash
