@@ -167,7 +167,7 @@ Résultat attendu : **l'approbation disparaît**, il faut une nouvelle revue.
 Ce TP illustre un workflow DevOps moderne combinant CI, revue de code et protection de branche.
 
 ## ❓ Questions de réflexion
-1. Suite à cet exercice, retournez voir le contenu de [test-driven-development](https://github.com/corentinbeuchet/test-driven-development), ou du code que vous aviez récupéré. Que constatez-vous en lisant le contenu du fichier [ci.yml](https://github.com/corentinbeuchet/test-driven-development/blob/main/.github/workflows/ci.yml) ?
+1. Ouvrez l'onglet **Actions** du dépôt [manage-security](https://github.com/corentinbeuchet/manage-security/actions) : c'est le pipeline que vous construirez aux exercices 3 à 5. Quelles étapes reconnaissez-vous ? Lesquelles vous semblent nouvelles, et à quoi servent-elles d'après vous ?
 2. Êtes-vous convaincu de l'utilité de la mise en place d'un workflow CI/CD ?
 3. Pensez-vous que cette protection de la branche `main` suffit à garantir la qualité du code ?
 4. Dans le test 3, la CI « teste » avec un simple `echo`. Que faudrait-il pour que ce check ait vraiment de la valeur ? (→ exercice suivant : `automated-tests`)
