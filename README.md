@@ -1,5 +1,7 @@
 # 🛡️ Exercice 2 – Mettre en place un workflow GitHub sécurisé (CI + revue de code)
 
+> 🎯 **Priorités** : les parties 1 à 3 et les tests 1, 2, 3 et 5 de la partie 4 sont l'essentiel, ce que vous devrez savoir refaire seul à l'évaluation finale. Le test 4 est pour aller plus loin.
+
 ## 📌 Contexte général
 Vous travaillez sur un projet hébergé sur GitHub.
 La branche `main` représente la version stable du projet.
@@ -20,6 +22,7 @@ Afin de garantir la qualité du code et de limiter les erreurs, l'équipe décid
 - **Rendre la CI bloquante** : une PR dont la CI est rouge ne peut pas être mergée.
 - **Exiger une revue de code**, et expliquer pourquoi une approbation doit être refaite après un nouveau commit.
 - **Dire ce que vous engagez en approuvant une PR** : relire, comprendre, questionner, pas juste cliquer sur « Approve ».
+- **Faire une revue utile** : repérer ce qui rend un code difficile à lire, à tester ou dangereux, et le dire avec des commentaires précis et constructifs.
 
 ---
 
@@ -161,13 +164,74 @@ Résultat attendu : la CI passe au **rouge** et le **merge reste bloqué**, mêm
 Sur une PR déjà approuvée, poussez un nouveau commit.
 Résultat attendu : **l'approbation disparaît**, il faut une nouvelle revue.
 
+### Test 5 – Une vraie revue de code
+Jusqu'ici, votre binôme a approuvé un `hello.txt`. Une revue sert à autre chose : relire un **vrai** code et trouver ce qui pose problème **avant** le merge.
+
+`[CHACUN]` Partez d'un `main` à jour :
+```bash
+git switch main
+git pull
+git switch -c feature/total-panier
+```
+Ajoutez ces deux fichiers (le code est volontairement mauvais, **ne le corrigez pas avant la revue**), puis ouvrez une PR avec pour description : « Calcul du total du panier ».
+
+`src/Calc.java`
+```java
+import java.util.List;
+
+public class Calc {
+
+    // t : 1 = client normal, 2 = client fidèle
+    public double doIt(List<String[]> l, int t) {
+        double r = 0;
+        for (String[] x : l) {
+            if (t == 1) {
+                r = r + Double.parseDouble(x[1]) * 1.2;
+            } else if (t == 2) {
+                r = r + Double.parseDouble(x[1]) * 1.2 * 0.9;
+            } else {
+                r = r + Double.parseDouble(x[1]) * 1.2;
+            }
+        }
+        try {
+            Notifier.send("https://api.boutique.example/total?token=abc123", r);
+        } catch (Exception e) {
+        }
+        return r;
+    }
+}
+```
+
+`test/CalcTest.java`
+```java
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+class CalcTest {
+    @Test
+    void test1() {
+        assertNotNull(new Calc());
+    }
+}
+```
+
+`[BINÔME]` Faites la revue (**Files changed**) :
+1. Laissez **au moins 4 commentaires** sur des lignes précises. Pour chacun : le problème, pourquoi c'est un problème, une proposition.
+2. Aidez-vous de ces questions : le code fait-il ce que dit la description ? Est-il testé, et le test peut-il échouer ? Un autre développeur le comprend-il sans vous ? Y a-t-il un risque de sécurité ?
+3. Terminez par **Review changes → Request changes** (pas « Approve »).
+
+`[AUTEUR]` Corrigez en tenant compte des commentaires, poussez, répondez à chaque commentaire (« corrigé dans … » ou « non, parce que… »), puis redemandez une revue.
+Résultat attendu : le binôme approuve la **nouvelle** version, et vous pouvez merger.
+
+> 💡 Un bon commentaire de revue vise le code, pas la personne : « ce nom ne dit pas ce que la méthode calcule, `totalTtc` ? » plutôt que « c'est illisible ». Les questions de forme (indentation, espaces) sont le travail d'un outil (linter) dans la CI, pas du relecteur : vous le mettrez en place à l'exercice 3.
+
 ---
 
 ## 🏁 Conclusion
 Ce TP illustre un workflow DevOps moderne combinant CI, revue de code et protection de branche.
 
 ## ❓ Questions de réflexion
-1. Ouvrez l'onglet **Actions** du dépôt [manage-security](https://github.com/corentinbeuchet/manage-security/actions) : c'est le pipeline que vous construirez aux exercices 3 à 5. Quelles étapes reconnaissez-vous ? Lesquelles vous semblent nouvelles, et à quoi servent-elles d'après vous ?
+1. Ouvrez l'onglet **Actions** du dépôt [manage-security](https://github.com/corentinbeuchet/manage-security/actions) : c'est le pipeline que vous construirez aux exercices 3 et 4 (l'exercice 5 y ajoutera la sécurité). Quelles étapes reconnaissez-vous ? Lesquelles vous semblent nouvelles, et à quoi servent-elles d'après vous ?
 2. Êtes-vous convaincu de l'utilité de la mise en place d'un workflow CI/CD ?
-3. Pensez-vous que cette protection de la branche `main` suffit à garantir la qualité du code ?
+3. Pensez-vous que cette protection de la branche `main` suffit à garantir la qualité du code ? Qu'est-ce que la revue du test 5 a trouvé qu'aucun réglage ne pouvait trouver ?
 4. Dans le test 3, la CI « teste » avec un simple `echo`. Que faudrait-il pour que ce check ait vraiment de la valeur ? (→ exercice suivant : `automated-tests`)
